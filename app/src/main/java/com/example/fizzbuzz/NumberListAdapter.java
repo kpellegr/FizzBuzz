@@ -15,6 +15,8 @@ public class NumberListAdapter extends RecyclerView.Adapter<NumberListAdapter.Nu
     private final LinkedList<Integer> mNumberList;
     private LayoutInflater mInflater;
 
+    private static int viewHolderNumber = 1;
+
     public NumberListAdapter(Context context,
                              LinkedList<Integer> numberList) {
         mInflater = LayoutInflater.from(context);
@@ -27,13 +29,18 @@ public class NumberListAdapter extends RecyclerView.Adapter<NumberListAdapter.Nu
     public NumberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View mItemView = mInflater.inflate(R.layout.numberview,
                 parent, false);
+
+        TextView holder_tv = mItemView.findViewById(R.id.holder_tv);
+        // We set the holder_tv TextView to the number of the holder. This allows us to count
+        // how many holders Android has requested.
+        holder_tv.setText(String.format("Holder #%d", viewHolderNumber++));
         return new NumberViewHolder(mItemView, this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull NumberViewHolder holder, int position) {
         Integer mCurrentNumber = mNumberList.get(position);
-        holder.numberView.setText(mCurrentNumber.toString());
+        holder.numberView.setText(String.format("%d", mCurrentNumber));
 
         holder.fizzbuzzView.setText(String.format("%s%s",
                 (mCurrentNumber % 3 == 0) ? "Fizz" : "",

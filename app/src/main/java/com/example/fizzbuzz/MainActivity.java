@@ -49,28 +49,22 @@ public class MainActivity extends AppCompatActivity {
         // we don't have to create an AsyncTask ourselves;
         JsonArrayRequest request = new JsonArrayRequest(myURL,
 
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        // Method executed when the response is succesful
-                        for (int i=0; i<response.length(); i++) {
-                            try {
-                                JSONObject student = response.getJSONObject(i);
-                                mNumberList.add(student.getInt("number"));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                response -> {
+                    // Method executed when the response is successful
+                    for (int i=0; i<response.length(); i++) {
+                        try {
+                            JSONObject student = response.getJSONObject(i);
+                            mNumberList.add(student.getInt("number"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        // Let the adapter know that it has to redraw itself
-                        mAdapter.notifyDataSetChanged();
                     }
+                    // Let the adapter know that it has to redraw itself
+                    mAdapter.notifyDataSetChanged();
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        // Method executed when there is an error.
-                        Log.e("FizzBuzz", error.getMessage());
-                    }
+                error -> {
+                    // Method executed when there is an error.
+                    Log.e("FizzBuzz", error.getMessage());
                 });
 
         // Set the request up for execution
