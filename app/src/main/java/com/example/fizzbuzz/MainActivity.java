@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -34,38 +35,17 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mQueue = Volley.newRequestQueue(this);
 
-        //populateList(100);
+        Intent intent = getIntent();
+        int number = intent.getIntExtra("MAXNUMBER", 100);
+
+        populateList(number);
 
         mRecyclerView = findViewById(R.id.recycler);
         mAdapter = new NumberListAdapter(this, mNumberList); // List is empty at this point
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // We create a new Volley request, to fetch the data at myURL
-        // Note that Volley automatically creates the request on a background thread, so
-        // we don't have to create an AsyncTask ourselves;
-        JsonArrayRequest request = new JsonArrayRequest(myURL,
-
-                response -> {
-                    // Method executed when the response is successful
-                    for (int i=0; i<response.length(); i++) {
-                        try {
-                            JSONObject student = response.getJSONObject(i);
-                            mNumberList.add(student.getInt("number"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    // Let the adapter know that it has to redraw itself
-                    mAdapter.notifyDataSetChanged();
-                },
-                error -> {
-                    // Method executed when there is an error.
-                    Log.e("FizzBuzz", error.getMessage());
-                });
-
-        // Set the request up for execution
-        mQueue.add(request);
+        //mQueue.add(createStudentFetchRequest());
     }
 
     @Override
@@ -94,5 +74,31 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 1; i<=max; i++) {
             mNumberList.add(i);
         }
+    }
+
+    // We create a new Volley request, to fetch the data at myURL
+    // Note that Volley automatically creates the request on a background thread, so
+    // we don't have to create an AsyncTask ourselves;
+    // Set the request up for execution
+    private JsonArrayRequest createStudentFetchRequest () {
+        return new JsonArrayRequest(myURL,
+
+                response -> {
+                    // Method executed when the response is successful
+                    for (int i=0; i<response.length(); i++) {
+                        try {
+                            JSONObject student = response.getJSONObject(i);
+                            mNumberList.add(student.getInt("number"));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    // Let the adapter know that it has to redraw itself
+                    mAdapter.notifyDataSetChanged();
+                },
+                error -> {
+                    // Method executed when there is an error.
+                    Log.e("FizzBuzz", error.getMessage());
+                });
     }
 }

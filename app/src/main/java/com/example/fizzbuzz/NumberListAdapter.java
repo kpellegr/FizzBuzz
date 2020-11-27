@@ -1,6 +1,7 @@
 package com.example.fizzbuzz;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,9 +43,23 @@ public class NumberListAdapter extends RecyclerView.Adapter<NumberListAdapter.Nu
         Integer mCurrentNumber = mNumberList.get(position);
         holder.numberView.setText(String.format("%d", mCurrentNumber));
 
-        holder.fizzbuzzView.setText(String.format("%s%s",
+        String fullText = String.format("%s%s",
                 (mCurrentNumber % 3 == 0) ? "Fizz" : "",
-                (mCurrentNumber % 5 == 0) ? "Buzz" : ""));
+                (mCurrentNumber % 5 == 0) ? "Buzz" : "");
+        holder.fizzbuzzView.setText(fullText);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND); // IMPLICIT INTENT
+                intent.putExtra(Intent.EXTRA_TEXT, fullText);
+                intent.setType("text/plain");
+
+                if (intent.resolveActivity(v.getContext().getPackageManager()) != null) {
+                    v.getContext().startActivity(intent);
+                }
+            }
+        });
 
     }
 
